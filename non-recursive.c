@@ -1,22 +1,51 @@
 #include <stdio.h>
-#include <limits.h>
 
-int find_max_sub_array(int input[], int input_size) {
-    int sum = INT_MIN;
-    int temp = 0;
+struct max_profit_result {
+    int first_index;
+    int last_index;
+    int max_profit;
+};
+
+struct max_profit_result find_max_profit(int input[], int input_size) {
+    int sum = 0;
+    int first_index = 0;
+    int new_first_index = 0;
+    int last_index = 0;
+    int max_profit = 0;
     for (int i = 0; i < input_size; i++) {
-        temp += input[i];
-        if (temp > sum)
+        int temp = sum + input[i];
+        if (temp <= 0) {
+            sum = 0;
+            new_first_index = i + 1;
+        } else {
             sum = temp;
-        if (temp < 0)
-            temp = 0;
+        }
+
+        if (sum > max_profit) {
+            max_profit = sum;
+            last_index = i;
+            first_index = new_first_index;
+        }
     }
-    return sum;
+
+    struct max_profit_result result;
+    result.first_index = first_index;
+    result.last_index = last_index;
+    result.max_profit = max_profit;
+    return result;
 }
 
 int main() {
-    int input[] = {13, -3, -25, 20, -3, -16, -23, 18, 20, -1, 12, -5, -22, 15, -4, 7};
-    int input_size = sizeof(input) / sizeof(input[0]);
-    int result = find_max_sub_array(input, input_size);
-    printf("result: %d\n", result);
+    int input_size;
+    scanf("%i", &input_size);
+    if (input_size < 100000 && input_size > 0) {
+        int input[input_size];
+        for(int i = 0; i < input_size; i++) {
+            scanf("%d", &input[i]);
+        }
+        struct max_profit_result result = find_max_profit(input, input_size);
+        printf("%d %d %d\n", result.first_index, result.last_index, result.max_profit); 
+    } else {
+        printf("out of range\n");       
+    }
 }
