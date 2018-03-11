@@ -1,48 +1,74 @@
 #include <stdio.h>
-#include <limits.h>
 
-int find_max(int a, int b) {
-    return a > b ? a : b;
+struct max_profit_result {
+    int first_index;
+    int last_index;
+    int max_profit;
+};
+
+struct max_profit_result find_max(struct max_profit_result a, struct max_profit_result b) {
+    return (a.max_profit > b.max_profit) ? a : b;
 }
 
-int find_max_crossing_sub_array(int input[], int middle, int left, int right) {
-    int temp = 0;
-
-    // cannot initialize with 0 because negative result is valid
-    int left_max = INT_MIN;
-    int right_max = INT_MIN;
-
-    for(int i = middle; i >= left; i--) {
-        temp += input[i];
-        if (temp > left_max)
-            left_max = temp;
-    }
-
-    temp = 0;
-    for(int i = middle + 1; i <= right; i++) {
-        temp += input[i];
-        if (temp > right_max)
-            right_max = temp;
-    }
-    return left_max + right_max;
-}
-
-int find_max_sub_array(int input[], int left, int right) {
+struct max_profit_result find_max_profit(int input[], int left, int right) {
+    struct max_profit_result result;
+    result.first_index = left;
+    result.last_index = right;
+    result.max_profit = input[left];
 
     if (left == right)
-        return input[0];
-    
-    int middle = (left + right) / 2;
-    int left_max = find_max_sub_array(input, left, middle);
-    int right_max = find_max_sub_array(input, middle + 1, right);
+        return result;
 
-    return find_max(find_max(left_max, right_max), 
-        find_max_crossing_sub_array(input, middle, left, right));
+    int middle = (left + right) / 2;
+    int left_left = left;
+    int left_right = middle;
+    int right_left = middle + 1;
+    int right_right = right;
+    
+    struct max_profit_result left_result = find_max_profit(input, left_left, left_right);
+    struct max_profit_result right_result = find_max_profit(input, right_left, right_right);
+
+    int sum = 0;
+    int first_index = left_right;
+    int last_index = right_left;
+    int left_max_profit = input[left_right];
+    int right_max_profit = input[right_left];
+
+    for(int i = left_right; i >= left_left; i--) {
+        sum += input[i];
+        if (sum > left_max_profit) {
+            left_max_profit = sum;    
+            first_index = i;
+        }
+    }
+
+    sum = 0;
+    for(int i = right_left; i <= right_right; i++) {
+        sum += input[i];
+        if (sum > right_max_profit) {
+            right_max_profit = sum;
+            last_index = i;
+        }
+    }
+
+    result.first_index = first_index;
+    result.last_index = last_index;
+    result.max_profit = left_max_profit + right_max_profit;
+
+    return find_max(find_max(left_result, right_result), result);
 }
 
 int main() {
-    int input[] = {13, -3, -25, 20, -3, -16, -23, 18, 20, -1, 12, -5, -22, 15, -4, 7};
-    int input_size = sizeof(input) / sizeof(input[0]);
-    int result = find_max_sub_array(input, 0, input_size - 1);
-    printf("result: %d\n", result);
+    int input_size;
+    scanf("%i", &input_size);
+    if (input_size < 100000 && input_size > 0) {
+        int input[input_size];
+        for(int i = 0; i < input_size; i++) {
+            scanf("%d", &input[i]);
+        }
+        struct max_profit_result result = find_max_profit(input, 0, input_size - 1);
+        printf("%d %d %d\n", result.first_index, result.last_index, result.max_profit);
+    } else {
+        printf("out of range\n");
+    }
 }
