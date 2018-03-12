@@ -12,6 +12,7 @@ struct max_profit_result find_max_profit(int input[], int input_size) {
     int new_first_index = 0;
     int last_index = 0;
     int max_profit = 0;
+    
     for (int i = 0; i < input_size; i++) {
         int temp = sum + input[i];
         if (temp <= 0) {
@@ -37,15 +38,21 @@ struct max_profit_result find_max_profit(int input[], int input_size) {
 
 int main() {
     int input_size;
-    scanf("%i", &input_size);
-    if (input_size < 100000 && input_size > 0) {
-        int input[input_size];
-        for(int i = 0; i < input_size; i++) {
-            scanf("%d", &input[i]);
+    int scanf_result;
+    while((scanf_result = scanf("%i", &input_size)) != EOF) {
+        if (scanf_result == 1) {
+            if (input_size < 100000 && input_size > 0) {
+                int input[input_size];
+                for(int i = 0; i < input_size; i++) {
+                    scanf("%d", &input[i]);
+                }
+                struct max_profit_result result = find_max_profit(input, input_size);
+                printf("%d %d %d\n", result.first_index, result.last_index, result.max_profit); 
+            } else {
+                printf("out of range\n");
+            }
+        } else {
+            break;
         }
-        struct max_profit_result result = find_max_profit(input, input_size);
-        printf("%d %d %d\n", result.first_index, result.last_index, result.max_profit); 
-    } else {
-        printf("out of range\n");       
     }
 }
