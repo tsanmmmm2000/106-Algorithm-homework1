@@ -1,4 +1,7 @@
-# Profit Maximization Problem by recursive and non-recursive version program
+# Profit Maximization Problem by Recursive and Non-recursive Version Program
+
+題目說明：
+
 求出一串數字中，連續區間中的和的最大值為多少？
 
 請將課本方法以遞迴與非遞迴實現，程式直接讀取測資並以螢幕輸出。
